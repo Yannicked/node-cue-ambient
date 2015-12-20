@@ -46,6 +46,7 @@ function main() {
 	stdin.setEncoding( 'utf8' );
 	stdin.on( 'data', function( key ){
 	  if ( key === '\u001B' ) {
+		c.close();
 		ffstream.kill();
 		process.exit();
 	  }
