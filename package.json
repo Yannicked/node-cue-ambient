@@ -1,0 +1,19 @@
+{
+  "name": "node-cue-ambient",
+  "version": "1.0.0",
+  "description": "A ambient mode for cue enabled keyboards",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yannick de Jong",
+  "license": "ISC",
+  "dependencies": {
+    "cue-sdk-node": "^1.0.13",
+    "fluent-ffmpeg": "^2.0.1",
+    "node-win-screenres": "^1.0.0",
+    "pngjs": "^2.2.0",
+    "traceur": "^0.0.94"
+  },
+  "bin": {"cue-ambient": "./index.js"}
+}
