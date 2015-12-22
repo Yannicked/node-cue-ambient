@@ -15,8 +15,7 @@
     "cue-sdk-node": "^1.0.13",
     "fluent-ffmpeg": "^2.0.1",
     "node-win-screenres": "^1.0.0",
-    "pngjs": "^2.2.0",
-    "traceur": "^0.0.94"
+    "pngjs": "^2.2.0"
   },
   "bin": {"cue-ambient": "./index.js"}
 }

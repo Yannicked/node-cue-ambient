@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 var ffmpeg = require('fluent-ffmpeg');
-var traceur = require('traceur');
-var cue = traceur.require('cue-sdk-node');
+var cue = require('cue-sdk-node');
 var path = require('path');
 var screenres = require('node-win-screenres');
 var PNG = require('pngjs').PNG;
