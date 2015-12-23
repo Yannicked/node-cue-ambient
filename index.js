@@ -11,6 +11,8 @@ var fps = 30;
 var l = null;
 var c = null;
 
+var ffstream = null;
+
 var buff = [];
 
 var b = null;
@@ -20,7 +22,7 @@ function main() {
 	c = new cue.CueSDK();
 	var screenSize = getScreenSize();
 	l = c.getLeds();
-	var ffstream = ffmpeg()
+	ffstream = ffmpeg()
 		.input('desktop')
 		.inputFormat('gdigrab')
 		.inputOptions([
@@ -52,6 +54,39 @@ function main() {
 	});
 	console.log('Press ESC to exit.\n');
 	ffstream.pipe().on('data', parsevideo);
+}
+
+function create() {
+	ffmpeg.setFfmpegPath(path.join(__dirname, 'bin', 'ffmpeg.exe'));
+	c = new cue.CueSDK();
+	var screenSize = getScreenSize();
+	l = c.getLeds();
+	ffstream = ffmpeg()
+		.input('desktop')
+		.inputFormat('gdigrab')
+		.inputOptions([
+			'-offset_y', Math.round(screenSize.y*0.95),
+			'-video_size', screenSize.x+'x'+Math.round(screenSize.y*0.05),
+		])
+		.outputOptions([
+			'-f', 'image2pipe',
+			'-c:v', 'png',
+			'-vf', 'scale='+getKeyboardSize(l)+'x1'
+		])
+		.fps(fps)
+		.on('error', function(err) {
+            console.log('An error occurred: ' + err.message);
+        })
+		.on('start', function(cmd) {
+            //console.log('Started ' + cmd);
+        })
+	console.log('Press ESC to exit.\n');
+	ffstream.pipe().on('data', parsevideo);
+}
+
+function destroy() {
+	c.close();
+	ffstream.kill();
 }
 
 function parsevideo(chunk) {
@@ -128,4 +163,7 @@ process.on('exit', function() {
     b;
 });
 
-main();
+if(require.main === module) 
+   { main(); }
+else
+   { module.exports = {create: create, destroy: destroy} }
