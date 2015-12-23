@@ -75,12 +75,11 @@ function create() {
 		])
 		.fps(fps)
 		.on('error', function(err) {
-            console.log('An error occurred: ' + err.message);
+            //console.log('An error occurred: ' + err.message);
         })
 		.on('start', function(cmd) {
             //console.log('Started ' + cmd);
-        })
-	console.log('Press ESC to exit.\n');
+        });
 	ffstream.pipe().on('data', parsevideo);
 }
 
