@@ -1,33 +1,36 @@
 #!/usr/bin/env node
 
-var ffmpeg = require('fluent-ffmpeg');
 var cue = require('cue-sdk-node');
 var path = require('path');
 var screenres = require('node-win-screenres');
-var PNG = require('pngjs').PNG;
+// var PNG = require('pngjs').PNG;
+var gdi = require('node-win-gdigrab');
 
 var fps = 30;
 
 var l = null;
 var c = null;
 
-var ffstream = null;
 
 var buff = [];
 
 var b = null;
 
+var g = null;
+var e = null;
+
 function main() {
-	ffmpeg.setFfmpegPath(path.join(__dirname, 'bin', 'ffmpeg.exe'));
+	//ffmpeg.setFfmpegPath(path.join(__dirname, 'bin', 'ffmpeg.exe'));
 	c = new cue.CueSDK();
 	var screenSize = getScreenSize();
 	l = c.getLeds();
-	ffstream = ffmpeg()
+	g = new gdi({OffsetY: Math.round(screenSize.y*0.75), ScaleX: getKeyboardSize(l), ScaleY: 1});
+	/*ffstream = ffmpeg()
 		.input('desktop')
 		.inputFormat('gdigrab')
 		.inputOptions([
-			'-offset_y', Math.round(screenSize.y*0.95),
-			'-video_size', screenSize.x+'x'+Math.round(screenSize.y*0.05),
+			'-offset_y', Math.round(screenSize.y*0.50),
+			'-video_size', screenSize.x+'x'+Math.round(screenSize.y*0.50),
 		])
 		.outputOptions([
 			'-f', 'image2pipe',
@@ -39,53 +42,34 @@ function main() {
             console.log('An error occurred: ' + err.message);
         })
 		.on('start', function(cmd) {
-            //console.log('Started ' + cmd);
-        })
-	var stdin = process.stdin;
-	stdin.setRawMode( true );
-	stdin.resume();
-	stdin.setEncoding( 'utf8' );
-	stdin.on( 'data', function( key ){
-	  if ( key === '\u001B' ) {
+            console.log('Started ' + cmd);
+        })*/
+	e = setInterval(function() {
+		printpixels(g.grab());
+	}, 1000/30);
+	process.on('SIGINT', function() {
 		c.close();
-		ffstream.kill();
+		clearInterval(e)
+		g.destroy();
 		process.exit();
-	  }
 	});
-	console.log('Press ESC to exit.\n');
-	ffstream.pipe().on('data', parsevideo);
+	console.log('Press CTRL-C to exit.\n');
 }
 
 function create() {
-	ffmpeg.setFfmpegPath(path.join(__dirname, 'bin', 'ffmpeg.exe'));
 	c = new cue.CueSDK();
 	var screenSize = getScreenSize();
 	l = c.getLeds();
-	ffstream = ffmpeg()
-		.input('desktop')
-		.inputFormat('gdigrab')
-		.inputOptions([
-			'-offset_y', Math.round(screenSize.y*0.95),
-			'-video_size', screenSize.x+'x'+Math.round(screenSize.y*0.05),
-		])
-		.outputOptions([
-			'-f', 'image2pipe',
-			'-c:v', 'png',
-			'-vf', 'scale='+getKeyboardSize(l)+'x1'
-		])
-		.fps(fps)
-		.on('error', function(err) {
-            //console.log('An error occurred: ' + err.message);
-        })
-		.on('start', function(cmd) {
-            //console.log('Started ' + cmd);
-        });
-	ffstream.pipe().on('data', parsevideo);
+	g = new gdi({OffsetY: Math.round(screenSize.y*0.80), ScaleX: getKeyboardSize(l), ScaleY: 1});
+	e = setInterval(function() {
+		printpixels(g.grab());
+	}, 1000/30);
 }
 
 function destroy() {
 	c.close();
-	ffstream.kill();
+	clearInterval(e);
+	g.destroy();
 }
 
 function parsevideo(chunk) {
@@ -101,21 +85,23 @@ function parsevideo(chunk) {
 			pixeldata.push([r, g, b]);
 		}
 		printpixels(pixeldata);
+		delete pixeldata;
     });
 }
 
 function printpixels(pixeldata) {
-	if (buff.length >= fps) {
+	/*if (buff.length >= fps) {
 		buff.shift();
-	}
+	}*/
 	var leds = [];
+	//console.log(pixeldata);
 	for (var i = 0; i<l.length; i++) {
 		var k = l[i];
 		var s = k['left']-10
 		var e = s+k['width'];
 		leds.push([k['ledId']].concat(avgpixeldata(pixeldata, s, e)));
 	}
-	buff.push(leds);
+	//buff.push(leds);
 	b = c.set(leds, true);
 }
 
