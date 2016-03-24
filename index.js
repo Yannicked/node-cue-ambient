@@ -18,13 +18,17 @@ var b = null;
 
 var g = null;
 var e = null;
+var startingleft = 0;
 
 function main() {
 	//ffmpeg.setFfmpegPath(path.join(__dirname, 'bin', 'ffmpeg.exe'));
 	c = new cue.CueSDK();
 	var screenSize = getScreenSize();
+	console.log(screenSize);
 	l = c.getLeds();
-	g = new gdi({OffsetY: Math.round(screenSize.y*0.75), ScaleX: getKeyboardSize(l), ScaleY: 1});
+	g = new gdi({OffsetY: Math.round(screenSize.y*0.75), ScaleX: getKeyboardSize(l).size, ScaleY: 1});
+	startingleft = getKeyboardSize(l).min;
+	console.log(getKeyboardSize(l))
 	/*ffstream = ffmpeg()
 		.input('desktop')
 		.inputFormat('gdigrab')
@@ -72,23 +76,6 @@ function destroy() {
 	g.destroy();
 }
 
-function parsevideo(chunk) {
-	var pixeldata = [];
-	new PNG().parse(chunk, function(err, p) {
-		if (err) {
-			console.log(err);
-		}
-		for (var i = 0; i<p.data.length; i+=4) {
-			var r = p.data[i];
-			var g = p.data[i+1];
-			var b = p.data[i+2];
-			pixeldata.push([r, g, b]);
-		}
-		printpixels(pixeldata);
-		delete pixeldata;
-    });
-}
-
 function printpixels(pixeldata) {
 	/*if (buff.length >= fps) {
 		buff.shift();
@@ -97,7 +84,7 @@ function printpixels(pixeldata) {
 	//console.log(pixeldata);
 	for (var i = 0; i<l.length; i++) {
 		var k = l[i];
-		var s = k['left']-10
+		var s = k['left']-startingleft;
 		var e = s+k['width'];
 		leds.push([k['ledId']].concat(avgpixeldata(pixeldata, s, e)));
 	}
@@ -133,10 +120,12 @@ function avgpixeldata(pixeldata, start, end) {
 
 function getKeyboardSize(l) {
 	var max = 0;
+	var min = 999;
 	for (var i = 0; i<l.length; i++) {
 		max = Math.max(l[i]['width']+l[i]['left'], max);
+		min = Math.min(l[i]['left'], min);
 	}
-	return max-10;
+	return {max: max, min: min, size: max-min};
 }
 
 function getScreenSize() {
