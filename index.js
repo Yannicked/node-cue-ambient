@@ -64,7 +64,8 @@ function create() {
 	c = new cue.CueSDK();
 	var screenSize = getScreenSize();
 	l = c.getLeds();
-	g = new gdi({OffsetY: Math.round(screenSize.y*0.80), ScaleX: getKeyboardSize(l), ScaleY: 1});
+	startingleft = getKeyboardSize(l).min;
+	g = new gdi({OffsetY: Math.round(screenSize.y*0.75), ScaleX: getKeyboardSize(l).size, ScaleY: 1});
 	e = setInterval(function() {
 		printpixels(g.grab());
 	}, 1000/30);
