@@ -93,28 +93,14 @@ function printpixels(pixeldata) {
 	b = c.set(leds, true);
 }
 
-function soften(ledmap) {
-	if (buff.length < 1) {
-		return ledmap;
-	}
-	for (var i = 0; i<buff.length; i++) {
-		for (var j = 0; j<ledmap.length; j++) {
-			ledmap[j][1] = (buff[i][j][1]+ledmap[j][1])/2
-			ledmap[j][2] = (buff[i][j][2]+ledmap[j][2])/2
-			ledmap[j][3] = (buff[i][j][3]+ledmap[j][3])/2
-		}
-	}
-	return ledmap;
-}
-
 function avgpixeldata(pixeldata, start, end) {
 	var r = 0;
 	var g = 0;
 	var b = 0;
 	for (var i = start; i<end; i++) {
-		r+=pixeldata[i][0];
-		g+=pixeldata[i][1];
-		b+=pixeldata[i][2];
+		r+=pixeldata[i*3];
+		g+=pixeldata[(i*3)+1];
+		b+=pixeldata[(i*3)+2];
 	}
 	return [r/(end-start), g/(end-start), b/(end-start)];
 }
