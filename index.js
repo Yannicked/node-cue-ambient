@@ -98,11 +98,11 @@ function avgpixeldata(pixeldata, start, end) {
 	var g = 0;
 	var b = 0;
 	for (var i = start; i<end; i++) {
-		r+=pixeldata[i*3];
-		g+=pixeldata[(i*3)+1];
-		b+=pixeldata[(i*3)+2];
+		r+=Math.pow(pixeldata[i*3], 2);
+		g+=Math.pow(pixeldata[(i*3)+1], 2);
+		b+=Math.pow(pixeldata[(i*3)+2], 2);
 	}
-	return [r/(end-start), g/(end-start), b/(end-start)];
+	return [Math.round(Math.sqrt(r/(end-start))), Math.round(Math.sqrt(g/(end-start))), Math.round(Math.sqrt(b/(end-start)))];
 }
 
 function getKeyboardSize(l) {
