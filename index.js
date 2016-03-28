@@ -49,7 +49,7 @@ function main() {
             console.log('Started ' + cmd);
         })*/
 	e = setInterval(function() {
-		printpixels(g.grab());
+		g.grab(printpixels);
 	}, 1000/30);
 	process.on('SIGINT', function() {
 		c.close();
@@ -65,9 +65,9 @@ function create() {
 	var screenSize = getScreenSize();
 	l = c.getLeds();
 	startingleft = getKeyboardSize(l).min;
-	g = new gdi({OffsetY: Math.round(screenSize.y*0.75), ScaleX: getKeyboardSize(l).size, ScaleY: 1});
+	g = new gdi({OffsetY: Math.round(screenSize.y*0.50), ScaleX: getKeyboardSize(l).size, ScaleY: 1});
 	e = setInterval(function() {
-		printpixels(g.grab());
+		g.grab(printpixels);
 	}, 1000/30);
 }
 
